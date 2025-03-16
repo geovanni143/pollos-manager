@@ -1,9 +1,14 @@
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import Productos from "./pages/Productos";
+
 function App() {
-  return (
-    <div className="bg-blue-500 text-white text-center p-4">
-      La aplicacion web opera correctamente
-    </div>
-  );
+    return (
+        <Router>
+            <Routes>
+                <Route path="/productos" element={<Productos />} />
+            </Routes>
+        </Router>
+    );
 }
 
 export default App;
