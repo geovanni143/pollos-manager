@@ -1,18 +1,22 @@
+/* Define la clase principal de la aplicación */
 .App {
   text-align: center;
 }
 
+/* Define el estilo de la imagen del logo de la aplicación */
 .App-logo {
   height: 40vmin;
   pointer-events: none;
 }
 
+/* Define un estilo especial cuando el usuario no ha configurado una preferencia de reducción de movimiento */
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
   }
 }
 
+/* Define el estilo del encabezado principal de la aplicación */
 .App-header {
   background-color: #282c34;
   min-height: 100vh;
@@ -24,10 +28,12 @@
   color: white;
 }
 
+/* Define el estilo de los enlaces en la aplicación */
 .App-link {
   color: #61dafb;
 }
 
+/* Define la animación de rotación del logo */
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
