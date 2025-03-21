@@ -60,4 +60,28 @@ router.get("/", async (req, res) => {
     }
 });
 
+router.get("/", async (req, res) => {
+    try {
+        let { fechaInicio, fechaFin } = req.query;
+        let filtro = {};
+
+        // Si se reciben fechas, filtrar por rango de fechas
+        if (fechaInicio && fechaFin) {
+            filtro.fecha = { 
+                $gte: new Date(fechaInicio), 
+                $lte: new Date(fechaFin) 
+            };
+        }
+
+        const ventas = await Venta.find(filtro).populate("producto", "nombre precio").lean();
+        res.json(ventas);
+    } catch (err) {
+        console.error("❌ Error al obtener ventas:", err);
+        res.status(500).json({ error: "Error al obtener ventas" });
+    }
+});
+
+
+
+
 module.exports = router;
