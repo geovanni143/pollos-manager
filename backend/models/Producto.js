@@ -7,11 +7,10 @@ const ProductoSchema = new mongoose.Schema({
     categoria: { type: String, required: true },
     fechaCreacion: { type: Date, default: Date.now },
     
-    // 🔥 Relación con Puesto
     puesto: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Puesto",
-        required: false // Puedes hacer que sea obligatorio si todos los productos deben estar en un puesto
+        required: false
     }
 });
 

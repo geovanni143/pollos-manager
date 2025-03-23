@@ -1,12 +1,12 @@
+// models/Venta.js
 const mongoose = require("mongoose");
 
-const ventaSchema = new mongoose.Schema({
-    producto: { type: mongoose.Schema.Types.ObjectId, ref: "Producto", required: true },
-    cantidad: { type: Number, required: true },
-    total: { type: Number, required: true },
-    fecha: { type: Date, default: Date.now }
+const VentaSchema = new mongoose.Schema({
+  producto: { type: mongoose.Schema.Types.ObjectId, ref: "Producto", required: true },
+  cantidad: { type: Number, required: true },
+  total: { type: Number, required: true },
+  fecha: { type: Date, default: Date.now } // 🟢 Asegúrate de tener esto
 });
 
-const Venta = mongoose.model("Venta", ventaSchema);
+module.exports = mongoose.model("Venta", VentaSchema);
 
-module.exports = Venta;

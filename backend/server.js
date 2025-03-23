@@ -28,6 +28,8 @@ app.use("/productos", require("./routes/productos"));
 app.use("/ventas", require("./routes/ventas"));
 app.use("/puestos", require("./routes/puestos"));
 app.use("/gastos", gastosRoutes);
+app.use("/movimientos-stock", require("./routes/movimientos-stock"));
+
 
 // Iniciar servidor
 const PORT = process.env.PORT || 5000;

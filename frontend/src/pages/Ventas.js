@@ -51,7 +51,7 @@ function Ventas() {
                             </td>
                             <td style={{ padding: "12px" }}>{venta.cantidad}</td>
                             <td style={{ padding: "12px" }}>${venta.total}</td>
-                            <td style={{ padding: "12px" }}>{new Date(venta.fecha).toLocaleString()}</td>
+                            <td style={{ padding: "12px" }}>{(venta.fecha)}</td>
                         </tr>
                     ))}
                 </tbody>

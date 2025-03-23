@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const Producto = require("../models/Producto");
+const MovimientoStock = require("../models/MovimientoStock"); // importa el modelo
+
 
 // Obtener todos los productos
 router.get("/", async (req, res) => {
@@ -30,5 +32,30 @@ router.delete("/:id", async (req, res) => {
     await Producto.findByIdAndDelete(req.params.id);
     res.json({ mensaje: "Producto eliminado" });
 });
+
+// 🔴 Productos por agotarse (stock bajo)
+router.get("/agotados", async (req, res) => {
+    try {
+        const productos = await Producto.find({ stock: { $lte: 5 } }); // Puedes ajustar el número si quieres
+        res.json(productos);
+    } catch (err) {
+        console.error("❌ Error al obtener productos por agotarse:", err);
+        res.status(500).json({ error: "Error al obtener productos por agotarse" });
+    }
+});
+// Obtener histórico de movimientos de stock
+router.get("/movimientos", async (req, res) => {
+    try {
+      const movimientos = await MovimientoStock.find()
+        .populate("producto", "nombre")
+        .sort({ fecha: -1 });
+  
+      res.json(movimientos);
+    } catch (err) {
+      console.error("❌ Error al obtener movimientos:", err);
+      res.status(500).json({ error: "Error al obtener movimientos de stock" });
+    }
+  });
+  
 
 module.exports = router;

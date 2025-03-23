@@ -5,6 +5,7 @@ import RegistrarEmpleado from "./pages/RegistrarEmpleado";
 import Login from "./pages/Login";
 import Puestos from "./pages/Puestos";
 import Gastos from "./pages/Gastos"; 
+import Inventario from "./pages/Inventario";
 
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
         <Route path="/" element={<Login />} />
         <Route path="/puestos" element={<Puestos />} />
         <Route path="/gastos" element={<Gastos />} /> 
+        <Route path="/inventario" element={<Inventario />} />
         {/* Luego agregamos login-admin, empleados, productos, ventas */}
       </Routes>
     </Router>
