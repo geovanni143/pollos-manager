@@ -23,7 +23,7 @@ function Ventas() {
 
     return (
         <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
-            <h1 style={{ textAlign: "center", color: "#333", marginBottom: "20px" }}>Historial de Ventas</h1>
+            <h1 style={{ textAlign: "center", color: "#333", marginBottom: "20px" }}>Historial de Ventas de Pollos-Manager</h1>
             
             {/* Filtros */}
             <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
