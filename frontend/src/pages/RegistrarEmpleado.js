@@ -34,7 +34,7 @@ function RegistrarEmpleado() {
                 <div className="text-center mb-6">
                     <img src="/logo192.jpg" alt="Logo" className="w-16 h-16 mx-auto mb-2" />
                     <h1 className="text-2xl font-bold text-yellow-500">Pollos Manager</h1>
-                    <h2 className="text-lg text-gray-700">Registrar Empleado</h2>
+                    <h2 className="text-lg font-semibold mb-4">Registrar</h2>
                 </div>
 
                 <form onSubmit={registrarEmpleado} className="space-y-4">

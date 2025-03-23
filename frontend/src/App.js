@@ -3,6 +3,9 @@ import Productos from "./pages/Productos";
 import Ventas from "./pages/Ventas"; // 🔹 Aqui se importa la nueva página de ventas
 import RegistrarEmpleado from "./pages/RegistrarEmpleado";  
 import Login from "./pages/Login";
+import Puestos from "./pages/Puestos";
+import Gastos from "./pages/Gastos"; 
+
 
 function App() {
   return (
@@ -14,7 +17,8 @@ function App() {
         <Route path="/login" element={<Login />} />
         {/* 🔹 La nueva ruta para ver las ventas */}
         <Route path="/" element={<Login />} />
-        <Route path="/registrar" element={<RegistrarEmpleado />} />
+        <Route path="/puestos" element={<Puestos />} />
+        <Route path="/gastos" element={<Gastos />} /> 
         {/* Luego agregamos login-admin, empleados, productos, ventas */}
       </Routes>
     </Router>

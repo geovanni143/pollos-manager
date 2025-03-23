@@ -1,6 +1,8 @@
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
+const puestosRoutes = require("./routes/puestos");
+const gastosRoutes = require("./routes/gastos");
 require("dotenv").config();
 
 // Importar rutas de empleados
@@ -24,6 +26,8 @@ app.use("/empleados", empleadosRoutes); // Conecta correctamente la ruta de empl
 // Rutas para productos y ventas
 app.use("/productos", require("./routes/productos"));
 app.use("/ventas", require("./routes/ventas"));
+app.use("/puestos", require("./routes/puestos"));
+app.use("/gastos", gastosRoutes);
 
 // Iniciar servidor
 const PORT = process.env.PORT || 5000;
