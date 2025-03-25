@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const puestosRoutes = require("./routes/puestos");
+const reportesRoutes = require("./routes/reportes");
 const gastosRoutes = require("./routes/gastos");
 require("dotenv").config();
 
@@ -28,6 +29,7 @@ app.use("/productos", require("./routes/productos"));
 app.use("/ventas", require("./routes/ventas"));
 app.use("/puestos", require("./routes/puestos"));
 app.use("/gastos", gastosRoutes);
+app.use("/reportes", reportesRoutes);
 app.use("/movimientos-stock", require("./routes/movimientos-stock"));
 
 

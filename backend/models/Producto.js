@@ -1,3 +1,4 @@
+// models/Producto.js
 const mongoose = require("mongoose");
 
 const ProductoSchema = new mongoose.Schema({
@@ -6,12 +7,7 @@ const ProductoSchema = new mongoose.Schema({
     stock: { type: Number, required: true },
     categoria: { type: String, required: true },
     fechaCreacion: { type: Date, default: Date.now },
-    
-    puesto: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Puesto",
-        required: false
-    }
+    puesto: { type: mongoose.Schema.Types.ObjectId, ref: "Puesto", required: false } // asignación opcional
 });
 
 module.exports = mongoose.model("Producto", ProductoSchema);

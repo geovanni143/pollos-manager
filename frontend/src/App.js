@@ -6,7 +6,7 @@ import Login from "./pages/Login";
 import Puestos from "./pages/Puestos";
 import Gastos from "./pages/Gastos"; 
 import Inventario from "./pages/Inventario";
-
+import ReporteGanancias from "./pages/ReporteGanancias";
 
 function App() {
   return (
@@ -21,6 +21,7 @@ function App() {
         <Route path="/puestos" element={<Puestos />} />
         <Route path="/gastos" element={<Gastos />} /> 
         <Route path="/inventario" element={<Inventario />} />
+        <Route path="/reporte-ganancias" element={<ReporteGanancias />} />
         {/* Luego agregamos login-admin, empleados, productos, ventas */}
       </Routes>
     </Router>

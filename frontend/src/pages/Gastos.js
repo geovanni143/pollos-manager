@@ -1,97 +1,144 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import api from "../api";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 function Gastos() {
     const [gastos, setGastos] = useState([]);
-    const [categoria, setCategoria] = useState("insumos");
-    const [monto, setMonto] = useState("");
-    const [descripcion, setDescripcion] = useState("");
-    const [totalGastos, setTotalGastos] = useState(0);
-    const [totalVentas, setTotalVentas] = useState(0);
+    const [puestos, setPuestos] = useState([]);
+    const [formulario, setFormulario] = useState({
+        categoria: "",
+        monto: "",
+        descripcion: "",
+        puesto: ""
+    });
 
     useEffect(() => {
-        obtenerGastos();
-        obtenerVentas();
+        cargarGastos();
+        cargarPuestos();
     }, []);
 
-    const obtenerGastos = async () => {
-        const res = await api.get("/gastos");
-        setGastos(res.data);
-        const total = res.data.reduce((sum, g) => sum + g.monto, 0);
-        setTotalGastos(total);
-    };
-
-    const obtenerVentas = async () => {
-        const res = await api.get("/ventas");
-        const total = res.data.reduce((sum, v) => sum + v.total, 0);
-        setTotalVentas(total);
-    };
-
-    const registrarGasto = async (e) => {
-        e.preventDefault();
+    const cargarGastos = async () => {
         try {
-            await api.post("/gastos", { categoria, monto: Number(monto), descripcion });
-            setCategoria("insumos");
-            setMonto("");
-            setDescripcion("");
-            obtenerGastos();
+            const res = await api.get("/gastos");
+            setGastos(res.data);
         } catch (err) {
-            alert("❌ Error al registrar gasto");
+            console.error("❌ Error al cargar gastos:", err);
         }
     };
 
+    const cargarPuestos = async () => {
+        try {
+            const res = await api.get("/puestos");
+            setPuestos(res.data);
+        } catch (err) {
+            console.error("❌ Error al cargar puestos:", err);
+        }
+    };
+
+    const manejarCambio = (e) => {
+        setFormulario({ ...formulario, [e.target.name]: e.target.value });
+    };
+
+    const enviarFormulario = async (e) => {
+        e.preventDefault();
+        const nuevoGasto = {
+            ...formulario,
+            monto: Number(formulario.monto),
+            puesto: formulario.puesto || null
+        };
+
+        try {
+            await api.post("/gastos", nuevoGasto);
+            cargarGastos();
+            setFormulario({ categoria: "", monto: "", descripcion: "", puesto: "" });
+        } catch (err) {
+            console.error("❌ Error al registrar gasto:", err);
+        }
+    };
+
+    // 🧾 Exportar a PDF
+    const exportarPDF = () => {
+        const doc = new jsPDF();
+        doc.text("📄 Reporte de Gastos", 14, 15);
+
+        const filas = gastos.map(g => [
+            g.categoria,
+            `$${g.monto.toFixed(2)}`,
+            g.descripcion || "-",
+            new Date(g.fecha).toLocaleDateString(),
+            g.puesto?.nombre || "General"
+        ]);
+
+        autoTable(doc, {
+            head: [["Categoría", "Monto", "Descripción", "Fecha", "Puesto"]],
+            body: filas,
+            startY: 20,
+            styles: { fontSize: 10 }
+        });
+
+        doc.save("reporte_gastos.pdf");
+    };
+
     return (
-        <div className="min-h-screen bg-gray-100 p-6">
-            <div className="max-w-2xl mx-auto bg-white p-6 rounded shadow">
-                <h1 className="text-2xl font-bold mb-4 text-yellow-600">Planificador de Gastos</h1>
+        <div className="p-6">
+            <div className="flex justify-between items-center mb-4">
+                <h1 className="text-2xl font-bold text-yellow-600">💸 Gestión de Gastos</h1>
+                <button onClick={exportarPDF} className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                    📤 Exportar a PDF
+                </button>
+            </div>
 
-                <form onSubmit={registrarGasto} className="space-y-4 mb-6">
-                    <select
-                        value={categoria}
-                        onChange={(e) => setCategoria(e.target.value)}
-                        className="w-full border p-2 rounded"
-                    >
-                        <option value="insumos">Insumos</option>
-                        <option value="renta">Renta</option>
-                        <option value="sueldos">Sueldos</option>
-                        <option value="servicios">Servicios</option>
-                        <option value="otros">Otros</option>
-                    </select>
+            {/* Formulario */}
+            <form onSubmit={enviarFormulario} className="space-y-3 bg-white p-4 rounded shadow mb-6">
+                <select name="categoria" value={formulario.categoria} onChange={manejarCambio} className="input" required>
+                    <option value="">Selecciona categoría</option>
+                    <option value="insumos">Insumos</option>
+                    <option value="renta">Renta</option>
+                    <option value="sueldos">Sueldos</option>
+                    <option value="servicios">Servicios</option>
+                    <option value="otros">Otros</option>
+                </select>
 
-                    <input
-                        type="number"
-                        placeholder="Monto"
-                        value={monto}
-                        onChange={(e) => setMonto(e.target.value)}
-                        className="w-full border p-2 rounded"
-                        required
-                    />
+                <input type="number" name="monto" placeholder="Monto" value={formulario.monto} onChange={manejarCambio} className="input" required />
+                <input type="text" name="descripcion" placeholder="Descripción" value={formulario.descripcion} onChange={manejarCambio} className="input" />
 
-                    <input
-                        type="text"
-                        placeholder="Descripción"
-                        value={descripcion}
-                        onChange={(e) => setDescripcion(e.target.value)}
-                        className="w-full border p-2 rounded"
-                    />
-
-                    <button type="submit" className="w-full bg-yellow-400 hover:bg-yellow-500 text-white font-bold py-2 rounded">
-                        Registrar Gasto
-                    </button>
-                </form>
-
-                <div className="mb-4">
-                    <h2 className="font-semibold">Total Gastos: <span className="text-red-600">${totalGastos}</span></h2>
-                    <h2 className="font-semibold">Ganancias: <span className="text-green-600">${totalVentas - totalGastos}</span></h2>
-                </div>
-
-                <ul className="divide-y">
-                    {gastos.map((g) => (
-                        <li key={g._id} className="py-2">
-                            <span className="font-bold">{g.categoria}</span>: ${g.monto} - {g.descripcion}
-                        </li>
+                <select name="puesto" value={formulario.puesto} onChange={manejarCambio} className="input">
+                    <option value="">Sin puesto (gasto general)</option>
+                    {puestos.map(p => (
+                        <option key={p._id} value={p._id}>{p.nombre}</option>
                     ))}
-                </ul>
+                </select>
+
+                <button type="submit" className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">
+                    Registrar Gasto
+                </button>
+            </form>
+
+            {/* Tabla */}
+            <div className="overflow-x-auto bg-white rounded shadow">
+                <table className="min-w-full text-sm text-center border">
+                    <thead className="bg-gray-100">
+                        <tr>
+                            <th className="px-4 py-2 border">Categoría</th>
+                            <th className="px-4 py-2 border">Monto</th>
+                            <th className="px-4 py-2 border">Descripción</th>
+                            <th className="px-4 py-2 border">Fecha</th>
+                            <th className="px-4 py-2 border">Puesto</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {gastos.map((g, i) => (
+                            <tr key={i} className="border-t">
+                                <td className="px-4 py-2 border capitalize">{g.categoria}</td>
+                                <td className="px-4 py-2 border text-red-600">${g.monto.toFixed(2)}</td>
+                                <td className="px-4 py-2 border">{g.descripcion || "-"}</td>
+                                <td className="px-4 py-2 border">{new Date(g.fecha).toLocaleDateString()}</td>
+                                <td className="px-4 py-2 border">{g.puesto?.nombre || "General"}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
             </div>
         </div>
     );

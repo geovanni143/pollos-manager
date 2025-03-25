@@ -1,4 +1,3 @@
-// models/Gasto.js
 const mongoose = require("mongoose");
 
 const gastoSchema = new mongoose.Schema({
@@ -17,6 +16,11 @@ const gastoSchema = new mongoose.Schema({
   fecha: {
     type: Date,
     default: Date.now
+  },
+  puesto: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Puesto",
+    required: false
   }
 });
 
