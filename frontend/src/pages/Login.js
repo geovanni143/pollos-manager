@@ -51,7 +51,7 @@ function Login() {
                 </form>
 
                 <div className="mt-4 space-y-2">
-                    <button onClick={() => navigate("/registrar")} className="w-full border border-yellow-500 text-yellow-600 py-2 rounded-md text-sm font-medium hover:bg-yellow-100">
+                    <button onClick={() => navigate("/empleados")} className="w-full border border-yellow-500 text-yellow-600 py-2 rounded-md text-sm font-medium hover:bg-yellow-100">
                         REGISTRARSE
                     </button>
                     <button onClick={() => navigate("/login-admin")} className="w-full border border-yellow-500 text-yellow-600 py-2 rounded-md text-sm font-medium hover:bg-yellow-100">
