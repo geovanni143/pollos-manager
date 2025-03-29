@@ -2,7 +2,8 @@ const express = require("express");
 const router = express.Router();
 const Venta = require("../models/Venta");
 const Producto = require("../models/Producto");
-const MovimientoStock = require("../models/MovimientoStock"); // ✅ importado correctamente
+const MovimientoStock = require("../models/MovimientoStock"); 
+const Gasto = require("../models/Gasto"); // 👈 Importado aquí correctamente
 
 // 🟢 Registrar una venta
 router.post("/", async (req, res) => {
@@ -47,7 +48,7 @@ router.post("/", async (req, res) => {
     }
 });
 
-// 🟢 Obtener el historial de ventas (con opción de filtro por fecha)
+// 🟢 Obtener historial de ventas (filtro por fecha opcional)
 router.get("/", async (req, res) => {
     try {
         let { fechaInicio, fechaFin } = req.query;
@@ -89,6 +90,31 @@ router.get("/", async (req, res) => {
     } catch (err) {
         console.error("❌ Error al obtener ventas:", err);
         res.status(500).json({ error: "Error al obtener ventas" });
+    }
+});
+
+// 🟢 Nuevo endpoint para obtener gastos del día
+router.get("/gastos-del-dia", async (req, res) => {
+    try {
+        const today = new Date();
+        const startOfDay = new Date(today.setHours(0, 0, 0, 0));
+        const endOfDay = new Date(today.setHours(23, 59, 59, 999));
+
+        const gastosHoy = await Gasto.find({
+            fecha: { $gte: startOfDay, $lte: endOfDay }
+        });
+
+        const totalGastos = gastosHoy.reduce((sum, gasto) => sum + gasto.monto, 0);
+        const detalleGastos = gastosHoy.map(gasto => ({
+            categoria: gasto.categoria,
+            monto: gasto.monto,
+            descripcion: gasto.descripcion || "N/A"
+        }));
+
+        res.json({ totalGastos, detalleGastos });
+    } catch (err) {
+        console.error("❌ Error al obtener gastos del día:", err);
+        res.status(500).json({ error: "Error al obtener gastos del día" });
     }
 });
 

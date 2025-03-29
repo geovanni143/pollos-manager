@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Gasto = require("../models/Gasto");
+
 const Puesto = require("../models/Puesto");
 const pdf = require("html-pdf-node");
 // Registrar un gasto
