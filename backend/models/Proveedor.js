@@ -2,20 +2,17 @@ const mongoose = require("mongoose");
 
 const proveedorSchema = new mongoose.Schema({
   nombre: { type: String, required: true },
-  contacto: { type: String, required: true },
-  empresa: { type: String, required: true },
-  productos: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Producto"
-    }
-  ],
+  empresa: { type: String },
+  contacto: {
+    correo: { type: String },
+    telefono: { type: String }
+  },
+  descripcion: { type: String },
+  productos: [String],
   compras: [
     {
       fecha: { type: Date, default: Date.now },
-      producto: { type: mongoose.Schema.Types.ObjectId, ref: "Producto" },
-      cantidad: Number,
-      precioUnitario: Number
+      productos: [String]
     }
   ]
 });
