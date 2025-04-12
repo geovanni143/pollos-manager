@@ -57,7 +57,7 @@ function Gastos() {
         }
     };
 
-    // 🧾 Exportar a PDF
+    //Exportar PDF
     const exportarPDF = () => {
         const doc = new jsPDF();
         doc.text("📄 Reporte de Gastos", 14, 15);

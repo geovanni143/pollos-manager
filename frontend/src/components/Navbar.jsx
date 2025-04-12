@@ -1,18 +1,35 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 function Navbar() {
     const location = useLocation();
+    const navigate = useNavigate();
 
-    const enlaces = [
+    const rol = localStorage.getItem("rol");
+
+    // Enlaces base que todos pueden ver
+    const enlacesGenerales = [
         { ruta: "/dashboard", label: "Inicio", icono: "🏠" },
         { ruta: "/ventas", label: "Ventas", icono: "🛒" },
         { ruta: "/productos", label: "Productos", icono: "📦" },
+    ];
+
+    // Solo el dueño puede ver estos
+    const enlacesDueño = [
         { ruta: "/empleados", label: "Empleados", icono: "👥" },
         { ruta: "/reportes", label: "Reportes", icono: "📈" },
         { ruta: "/inventario", label: "Inventario", icono: "📊" },
         { ruta: "/gastos", label: "Gastos", icono: "💸" },
         { ruta: "/proveedores", label: "Proveedores", icono: "🧾" },
-        { ruta: "/login", label: "Cerrar sesión", icono: "🚪" },
+    ];
+
+    const handleLogout = () => {
+        localStorage.clear(); // Borra token y rol
+        navigate("/login");
+    };
+
+    const enlaces = [
+        ...enlacesGenerales,
+        ...(rol === "dueño" ? enlacesDueño : []),
     ];
 
     return (
@@ -33,6 +50,17 @@ function Navbar() {
                         </Link>
                     </li>
                 ))}
+
+                {/* Cerrar sesión */}
+                <li>
+                    <button
+                        onClick={handleLogout}
+                        className="flex flex-col items-center md:flex-row md:gap-2 text-sm px-3 py-2 rounded-md text-gray-700 hover:bg-gray-100"
+                    >
+                        <span className="text-xl">🚪</span>
+                        <span className="hidden md:inline">Cerrar sesión</span>
+                    </button>
+                </li>
             </ul>
         </nav>
     );

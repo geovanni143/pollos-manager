@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import api from "../api";
 
 function HistorialCompras() {
-  const { id } = useParams(); // ID del proveedor
+  const { id } = useParams(); 
   const [compras, setCompras] = useState([]);
 
   useEffect(() => {
