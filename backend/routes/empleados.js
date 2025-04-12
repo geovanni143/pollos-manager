@@ -2,78 +2,118 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const Empleado = require("../models/Empleado");
-const { verificarJWT, verificarAdmin } = require("../middleware/auth"); // Importa los middlewares
+const crypto = require("crypto");
 
 const router = express.Router();
 
-// 🟢 Registrar un empleado (protegido por JWT y solo para administradores)
-router.post("/registrar", verificarJWT, verificarAdmin, async (req, res) => {
-    try {
-        // Verificar que los datos estén completos
-        const { nombre, rol, contacto, password } = req.body;
-        console.log("Datos recibidos:", req.body);  // Depurar los datos que se reciben
+// 🔓 REGISTRO ABIERTO PARA TODOS
+router.post("/registrar", async (req, res) => {
+  try {
+    const { nombre, rol, contacto, password, pin, puesto } = req.body;
 
-        if (!nombre || !rol || !contacto || !password) {
-            console.log("Error: Faltan datos obligatorios");
-            return res.status(400).json({ mensaje: "Todos los campos son obligatorios" });
-        }
-
-        // Verificar si el correo ya está en uso
-        const empleadoExistente = await Empleado.findOne({ "contacto.correo": contacto.correo });
-        if (empleadoExistente) {
-            console.log("Error: Correo ya registrado");
-            return res.status(400).json({ mensaje: "Correo ya registrado" });
-        }
-
-        // Encriptar la contraseña
-        const passwordEncriptado = await bcrypt.hash(password, 10);
-
-        // Crear el nuevo empleado
-        const nuevoEmpleado = new Empleado({
-            nombre,
-            rol,
-            contacto,
-            password: passwordEncriptado
-        });
-
-        // Guardar el empleado
-        await nuevoEmpleado.save();
-        console.log("Empleado registrado:", nuevoEmpleado);  // Depurar el empleado registrado
-        res.status(201).json({ mensaje: "Empleado registrado", empleado: nuevoEmpleado });
-
-    } catch (err) {
-        console.error("❌ Error al registrar empleado:", err);
-        res.status(500).json({ error: "Error al registrar empleado" });
+    if (!nombre || !rol || !contacto || !password || !contacto.correo || !contacto.telefono) {
+      return res.status(400).json({ mensaje: "Todos los campos son obligatorios" });
     }
+
+    const correoNormalizado = contacto.correo.toLowerCase().trim();
+
+    const existente = await Empleado.findOne({ "contacto.correo": correoNormalizado });
+    if (existente) {
+      return res.status(400).json({ mensaje: "Este correo ya está registrado." });
+    }
+
+    const nuevoEmpleado = new Empleado({
+      nombre,
+      rol,
+      contacto: {
+        correo: correoNormalizado,
+        telefono: contacto.telefono
+      },
+      password
+    });
+
+    if (rol === "empleado") {
+      if (!pin || !puesto) {
+        return res.status(400).json({ mensaje: "El PIN del dueño y el puesto son obligatorios." });
+      }
+
+      const dueño = await Empleado.findOne({ pin, rol: "dueño" });
+      if (!dueño) {
+        return res.status(404).json({ mensaje: "PIN inválido. No se encontró dueño asociado." });
+      }
+
+      nuevoEmpleado.dueño = dueño._id;
+      nuevoEmpleado.puesto = puesto;
+    }
+
+    await nuevoEmpleado.save();
+
+    const token = jwt.sign({ id: nuevoEmpleado._id, rol: nuevoEmpleado.rol }, process.env.JWT_SECRET || "secreto", {
+      expiresIn: "1d"
+    });
+
+    if (rol === "dueño") {
+      return res.status(201).json({
+        mensaje: "Dueño registrado correctamente",
+        pin: nuevoEmpleado.pin,
+        token
+      });
+    }
+
+    res.status(201).json({ mensaje: "Empleado registrado correctamente", token });
+
+  } catch (err) {
+    console.error("❌ Error al registrar:", err);
+    res.status(500).json({ mensaje: "Error interno al registrar" });
+  }
 });
 
-// 🟢 Iniciar sesión (no protegido, accesible para todos)
+// 🔓 LOGIN - CUALQUIER EMPLEADO O DUEÑO
 router.post("/login", async (req, res) => {
-    try {
-        const { correo, password } = req.body;
-        console.log("Datos de login recibidos:", req.body);  // Depurar datos de login
+  try {
+    const { correo, password } = req.body;
+    const correoNormalizado = correo.toLowerCase().trim();
 
-        const empleado = await Empleado.findOne({ "contacto.correo": correo });
-        if (!empleado) {
-            console.log("Error: Correo no encontrado");
-            return res.status(400).json({ mensaje: "Correo o contraseña incorrectos" });
-        }
-
-        // Verificar la contraseña
-        const passwordCorrecto = await bcrypt.compare(password, empleado.password);
-        if (!passwordCorrecto) {
-            console.log("Error: Contraseña incorrecta");
-            return res.status(400).json({ mensaje: "Correo o contraseña incorrectos" });
-        }
-
-        // Crear y firmar el JWT
-        const token = jwt.sign({ id: empleado._id, rol: empleado.rol }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        console.log("Login exitoso, token generado:", token);  // Verificar token generado
-        res.json({ mensaje: "Login exitoso", token });
-    } catch (err) {
-        console.error("❌ Error al iniciar sesión:", err);
-        res.status(500).json({ error: "Error al iniciar sesión" });
+    const empleado = await Empleado.findOne({ "contacto.correo": correoNormalizado });
+    if (!empleado) {
+      return res.status(400).json({ mensaje: "Correo o contraseña incorrectos" });
     }
+
+    if (empleado.bloqueado) {
+      return res.status(403).json({ mensaje: "Cuenta bloqueada. Contacta al administrador." });
+    }
+
+    const esCorrecto = await bcrypt.compare(password, empleado.password);
+    if (!esCorrecto) {
+      empleado.intentosFallidos = (empleado.intentosFallidos || 0) + 1;
+
+      if (empleado.intentosFallidos >= 3) {
+        empleado.bloqueado = true;
+      }
+
+      await empleado.save();
+      return res.status(400).json({ mensaje: "Correo o contraseña incorrectos" });
+    }
+
+    empleado.intentosFallidos = 0;
+    await empleado.save();
+
+    const token = jwt.sign({ id: empleado._id, rol: empleado.rol }, process.env.JWT_SECRET || "secreto", {
+      expiresIn: "1d"
+    });
+
+    res.json({
+      mensaje: "Login exitoso",
+      token,
+      rol: empleado.rol,
+      id: empleado._id,
+      nombre: empleado.nombre,
+      pin: empleado.rol === "dueño" ? empleado.pin : undefined
+    });
+  } catch (err) {
+    console.error("❌ Error general en login:", err);
+    res.status(500).json({ mensaje: "Error al iniciar sesión" });
+  }
 });
 
 module.exports = router;

@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
-const crypto = require("crypto");
 
 const empleadoSchema = new mongoose.Schema({
   nombre: { type: String, required: true },
@@ -16,40 +15,51 @@ const empleadoSchema = new mongoose.Schema({
   },
   password: { type: String, required: true },
   fechaCreacion: { type: Date, default: Date.now },
-  pin: { type: String, unique: true, sparse: true },
+  pin: { type: String, unique: true, sparse: true }, // Solo para dueños
+  dueño: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Empleado",
+    required: function () {
+      return this.rol === "empleado";
+    }
+  },
   puesto: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Puesto",
-    required: false
+    required: function () {
+      return this.rol === "empleado";
+    }
   },
   intentosFallidos: { type: Number, default: 0 },
   bloqueado: { type: Boolean, default: false }
 });
 
-async function generarPinUnico() {
-  let pin, existe = true;
-  while (existe) {
-    pin = crypto.randomBytes(3).toString("hex");
-    existe = await mongoose.models.Empleado.findOne({ pin });
-  }
-  return pin;
-}
 
 empleadoSchema.pre("save", async function (next) {
   if (this.isModified("password")) {
     this.password = await bcrypt.hash(this.password, 10);
   }
+
   if (this.rol === "dueño" && !this.pin) {
     this.pin = await generarPinUnico();
   }
+
   if (this.rol === "empleado") {
     this.pin = undefined;
+
+    if (!this.dueño) {
+      return next(new Error("Un empleado debe estar vinculado a un dueño."));
+    }
+
     if (!this.puesto) {
       return next(new Error("Un empleado debe estar asignado a un puesto."));
     }
   }
+
   next();
 });
 
 const Empleado = mongoose.model("Empleado", empleadoSchema);
+const generarPinUnico = require("../utils/generarPin");
+
 module.exports = Empleado;
