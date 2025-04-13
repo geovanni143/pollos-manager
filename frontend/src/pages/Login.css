@@ -1,132 +1,71 @@
-/* Base */
-body {
-    margin: 0;
-    font-family: 'Segoe UI', sans-serif;
-    background: #f7f7f7;
-  }
-  
-  /* Layout general */
-  .min-h-screen {
-    background: linear-gradient(to bottom right, #FFF6E0, #FFECC2);
+/* Fondo principal con ondas tipo splash */
+.min-h-screen {
+    position: relative;
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 2rem;
-    position: relative;
+    background: #FFF6E0;
     overflow: hidden;
+    z-index: 1;
   }
   
-  /* Columna derecha simulada */
+  /* Onda superior */
   .min-h-screen::before {
     content: "";
     position: absolute;
-    right: 0;
     top: 0;
-    width: 50%;
-    height: 100%;
-    background: #FEC100;
-    border-top-left-radius: 100px;
-    border-bottom-left-radius: 100px;
+    left: 0;
+    width: 100%;
+    height: 40%;
+    background-color: #FEC100;
+    clip-path: polygon(0 0, 0 70%, 20% 60%, 40% 75%, 60% 55%, 80% 70%, 100% 50%, 100% 0);
     z-index: 0;
-    transition: all 0.3s ease-in-out;
+    opacity: 0.95;
   }
   
-  /* Tarjeta login */
+  /* Onda inferior */
+  .min-h-screen::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 40%;
+    background-color: #FFD84C;
+    clip-path: polygon(0 100%, 0 30%, 20% 50%, 40% 40%, 60% 60%, 80% 45%, 100% 65%, 100% 100%);
+    z-index: 0;
+    opacity: 0.85;
+  }
+  
+  /* Tarjeta blanca encima de las ondas */
   .bg-white {
     background-color: white !important;
     border-radius: 1rem;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
     max-width: 420px;
     width: 100%;
-    padding: 2rem;
     text-align: center;
-    z-index: 1;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    z-index: 2;
     position: relative;
   }
   
-  /* Logo */
-  .bg-white img {
-    width: 60px;
-    height: 60px;
-    margin-bottom: 1rem;
-  }
-  
-  /* Título */
-  .text-yellow-500 {
-    color: #FEC100 !important;
-    font-size: 1.8rem;
-    font-weight: 800;
-  }
-  
-  /* Subtítulo */
-  .text-lg {
-    color: #333 !important;
-    font-weight: 600;
-    margin-bottom: 1.2rem;
-  }
-  
-  /* Inputs */
-  input[type="email"],
-  input[type="password"] {
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid #ccc;
-    border-radius: 0.5rem;
-    font-size: 0.95rem;
-    margin-bottom: 0.75rem;
-    box-sizing: border-box;
-  }
-  
-  /* Botón principal */
-  .bg-yellow-400 {
-    background-color: #FEC100 !important;
-    color: white !important;
-    font-weight: 700 !important;
-    transition: background 0.3s ease;
-  }
-  
-  .bg-yellow-400:hover {
-    background-color: #FFD84C !important;
-  }
-  
-  /* Botones secundarios */
-  .border-yellow-500 {
-    background-color: white !important;
-    border: 2px solid #FEC100 !important;
-    color: #FEC100 !important;
-    font-weight: 600 !important;
-    margin-top: 0.5rem;
-    transition: background 0.3s ease;
-  }
-  
-  .border-yellow-500:hover {
-    background-color: #FFF4CC !important;
-  }
-  
-  /* Enlace olvidar contraseña */
-  .text-yellow-600 {
-    color: #FEC100 !important;
-    font-size: 0.85rem;
-    text-decoration: underline !important;
-    cursor: pointer;
-    border: none;
-    background: none;
-  }
-  
-  .text-yellow-600:hover {
-    color: #C28E00 !important;
-  }
-  
-  /* ✅ RESPONSIVE MÓVIL */
+  /* Mobile ajuste para evitar que las ondas se corten o superpongan */
   @media (max-width: 768px) {
-    .min-h-screen {
-      padding: 1.25rem;
-      background: linear-gradient(to bottom right, #FFF6E0, #FFECC2);
+    .min-h-screen::before {
+      height: 30%;
+      clip-path: polygon(0 0, 0 60%, 25% 55%, 50% 65%, 75% 45%, 100% 60%, 100% 0);
     }
   
-    .min-h-screen::before {
-      display: none; /* Elimina la mitad derecha amarilla */
+    .min-h-screen::after {
+      height: 30%;
+      clip-path: polygon(0 100%, 0 40%, 25% 50%, 50% 45%, 75% 55%, 100% 40%, 100% 100%);
+    }
+  
+    .min-h-screen {
+      padding: 1rem;
     }
   
     .bg-white {
