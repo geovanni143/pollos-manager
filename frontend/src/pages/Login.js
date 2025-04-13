@@ -26,6 +26,7 @@ function Login() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-yellow-50 to-orange-100 flex justify-center items-center p-4">
+      <div className="background-float"></div>
       <div className="bg-white shadow-md rounded-xl w-full max-w-sm p-6 text-center">
         <img src="/logo192.jpg" alt="Logo" className="w-16 h-16 mx-auto mb-2" />
         <h1 className="text-2xl font-extrabold text-yellow-500 mb-1">Pollos Manager</h1>
