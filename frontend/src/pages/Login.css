@@ -1,21 +1,47 @@
-/* Fondo general degradado */
+/* Fondo general */
 body {
     margin: 0;
     font-family: 'Segoe UI', sans-serif;
-    background: linear-gradient(to bottom right, #FFF6E0, #FFECC2);
+    background: #f7f7f7;
   }
   
-  /* Personaliza clase que ya existe en Tailwind */
+  /* Fondo degradado + espacio lateral para el bloque verde */
   .min-h-screen {
-    background: linear-gradient(to bottom right, #FFF6E0, #FFECC2) !important;
+    background: linear-gradient(to bottom right, #FFF6E0, #FFECC2);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    padding: 2rem;
+    overflow: hidden;
   }
   
-  /* Tarjeta blanca */
+  /* SIMULACIÓN de columna verde con pseudoelemento */
+  .min-h-screen::before {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 50%;
+    height: 100%;
+    background: #FEC100;
+    border-top-left-radius: 100px;
+    border-bottom-left-radius: 100px;
+    z-index: 0;
+  }
+  
+  /* La tarjeta debe quedar sobre el fondo */
   .bg-white {
-    background-color: #fff !important;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08) !important;
-    border-radius: 1rem !important;
-    padding: 2rem !important;
+    background-color: white !important;
+    border-radius: 1rem;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    max-width: 420px;
+    width: 100%;
+    padding: 2rem;
+    text-align: center;
+    z-index: 1;
+    position: relative;
   }
   
   /* Logo */
@@ -25,27 +51,31 @@ body {
     margin-bottom: 1rem;
   }
   
-  /* Título Pollos Manager */
+  /* Título principal */
   .text-yellow-500 {
     color: #FEC100 !important;
-    font-weight: 800 !important;
-    font-size: 1.8rem !important;
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin-bottom: 0.2rem;
   }
   
   /* Subtítulo */
   .text-lg {
-    color: #444 !important;
-    font-weight: 600 !important;
-    margin-bottom: 1.2rem !important;
+    color: #333 !important;
+    font-weight: 600;
+    margin-bottom: 1.2rem;
   }
   
-  /* Campos de entrada */
+  /* Inputs */
   input[type="email"],
   input[type="password"] {
-    border: 1px solid #ccc !important;
-    padding: 0.75rem !important;
-    border-radius: 0.5rem !important;
-    font-size: 0.95rem !important;
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 0.5rem;
+    font-size: 0.95rem;
+    margin-bottom: 0.75rem;
+    box-sizing: border-box;
   }
   
   /* Botón principal */
@@ -53,37 +83,54 @@ body {
     background-color: #FEC100 !important;
     color: white !important;
     font-weight: 700 !important;
-    transition: background 0.3s ease !important;
+    transition: background 0.3s ease;
   }
   
   .bg-yellow-400:hover {
     background-color: #FFD84C !important;
   }
   
-  /* Botones secundarios (registrarse, admin) */
+  /* Botones secundarios */
   .border-yellow-500 {
+    background-color: white !important;
     border: 2px solid #FEC100 !important;
     color: #FEC100 !important;
-    background: white !important;
     font-weight: 600 !important;
-    transition: background 0.3s ease !important;
+    margin-top: 0.5rem;
+    transition: background 0.3s ease;
   }
   
   .border-yellow-500:hover {
     background-color: #FFF4CC !important;
   }
   
-  /* Botón olvidar contraseña */
+  /* Enlace olvidar contraseña */
   .text-yellow-600 {
     color: #FEC100 !important;
-    font-size: 0.85rem !important;
-    cursor: pointer;
+    font-size: 0.85rem;
     text-decoration: underline !important;
-    background: none !important;
-    border: none !important;
+    cursor: pointer;
+    border: none;
+    background: none;
   }
   
   .text-yellow-600:hover {
     color: #C28E00 !important;
+  }
+  
+  /* RESPONSIVE para móvil */
+  @media (max-width: 768px) {
+    .min-h-screen::before {
+      display: none;
+    }
+  
+    .min-h-screen {
+      background: linear-gradient(to bottom right, #FFF6E0, #FFECC2);
+      padding: 1rem;
+    }
+  
+    .bg-white {
+      max-width: 100%;
+    }
   }
   
