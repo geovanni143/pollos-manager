@@ -1,23 +1,23 @@
-/* Fondo general */
+/* Base */
 body {
     margin: 0;
     font-family: 'Segoe UI', sans-serif;
     background: #f7f7f7;
   }
   
-  /* Fondo degradado + espacio lateral para el bloque verde */
+  /* Layout general */
   .min-h-screen {
     background: linear-gradient(to bottom right, #FFF6E0, #FFECC2);
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    position: relative;
     padding: 2rem;
+    position: relative;
     overflow: hidden;
   }
   
-  /* SIMULACIÓN de columna verde con pseudoelemento */
+  /* Columna derecha simulada */
   .min-h-screen::before {
     content: "";
     position: absolute;
@@ -29,9 +29,10 @@ body {
     border-top-left-radius: 100px;
     border-bottom-left-radius: 100px;
     z-index: 0;
+    transition: all 0.3s ease-in-out;
   }
   
-  /* La tarjeta debe quedar sobre el fondo */
+  /* Tarjeta login */
   .bg-white {
     background-color: white !important;
     border-radius: 1rem;
@@ -51,12 +52,11 @@ body {
     margin-bottom: 1rem;
   }
   
-  /* Título principal */
+  /* Título */
   .text-yellow-500 {
     color: #FEC100 !important;
     font-size: 1.8rem;
     font-weight: 800;
-    margin-bottom: 0.2rem;
   }
   
   /* Subtítulo */
@@ -118,15 +118,15 @@ body {
     color: #C28E00 !important;
   }
   
-  /* RESPONSIVE para móvil */
+  /* ✅ RESPONSIVE MÓVIL */
   @media (max-width: 768px) {
-    .min-h-screen::before {
-      display: none;
+    .min-h-screen {
+      padding: 1.25rem;
+      background: linear-gradient(to bottom right, #FFF6E0, #FFECC2);
     }
   
-    .min-h-screen {
-      background: linear-gradient(to bottom right, #FFF6E0, #FFECC2);
-      padding: 1rem;
+    .min-h-screen::before {
+      display: none; /* Elimina la mitad derecha amarilla */
     }
   
     .bg-white {
