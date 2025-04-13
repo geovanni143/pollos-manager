@@ -1,5 +1,16 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
+const crypto = require("crypto"); // ⚙️ Para generar el PIN
+
+// ✅ Esta función ya está integrada aquí directamente
+async function generarPinUnico() {
+  let pin, existe = true;
+  while (existe) {
+    pin = crypto.randomBytes(3).toString("hex").toUpperCase(); // 6 caracteres
+    existe = await mongoose.models.Empleado.findOne({ pin });
+  }
+  return pin;
+}
 
 const empleadoSchema = new mongoose.Schema({
   nombre: { type: String, required: true },
@@ -34,7 +45,7 @@ const empleadoSchema = new mongoose.Schema({
   bloqueado: { type: Boolean, default: false }
 });
 
-
+// 🔒 Middleware para hashear contraseña y generar PIN si es dueño
 empleadoSchema.pre("save", async function (next) {
   if (this.isModified("password")) {
     this.password = await bcrypt.hash(this.password, 10);
@@ -60,6 +71,4 @@ empleadoSchema.pre("save", async function (next) {
 });
 
 const Empleado = mongoose.model("Empleado", empleadoSchema);
-const generarPinUnico = require("../utils/generarPin");
-
 module.exports = Empleado;
