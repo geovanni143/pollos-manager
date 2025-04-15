@@ -1,69 +1,81 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
 function Navbar() {
-    const location = useLocation();
-    const navigate = useNavigate();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const rol = localStorage.getItem("rol");
 
-    const rol = localStorage.getItem("rol");
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate("/login");
+  };
 
-    // Enlaces base que todos pueden ver
-    const enlacesGenerales = [
-        { ruta: "/dashboard", label: "Inicio", icono: "🏠" },
-        { ruta: "/ventas", label: "Ventas", icono: "🛒" },
-        { ruta: "/productos", label: "Productos", icono: "📦" },
-    ];
+  const enlace = (ruta, label, icono) => (
+    <li key={ruta}>
+      <Link
+        to={ruta}
+        className={`flex items-center gap-3 px-4 py-2 rounded-lg transition ${
+          location.pathname === ruta
+            ? "bg-yellow-100 text-yellow-600 font-semibold"
+            : "text-gray-700 hover:bg-gray-100"
+        }`}
+      >
+        <span className="text-xl">{icono}</span>
+        <span>{label}</span>
+      </Link>
+    </li>
+  );
 
-    // Solo el dueño puede ver estos
-    const enlacesDueño = [
-        { ruta: "/empleados", label: "Empleados", icono: "👥" },
-        { ruta: "/reportes", label: "Reportes", icono: "📈" },
-        { ruta: "/inventario", label: "Inventario", icono: "📊" },
-        { ruta: "/gastos", label: "Gastos", icono: "💸" },
-        { ruta: "/proveedores", label: "Proveedores", icono: "🧾" },
-    ];
+  const enlacesPerfil = [enlace("/perfil", "Mi Perfil", "🙍‍♂️")];
 
-    const handleLogout = () => {
-        localStorage.clear(); // Borra token y rol
-        navigate("/login");
-    };
+  const enlacesGenerales = [
+    enlace("/notificaciones", "Notificaciones", "🔔"),
+    enlace("/dashboard", "Resumen Diario", "📅"),
+    enlace("/ventas", "Ventas", "🛒"),
+    enlace("/productos", "Productos", "📦"),
+    enlace("/puestos", "Puestos", "🏪"),
+  ];
 
-    const enlaces = [
-        ...enlacesGenerales,
-        ...(rol === "dueño" ? enlacesDueño : []),
-    ];
+  const enlacesDueño = rol === "dueño" ? [
+    enlace("/mis-empleados", "Mis Empleados", "👥"),
+    enlace("/reportes", "Reportes", "📈"),
+    enlace("/inventario", "Inventario", "📊"),
+    enlace("/gastos", "Gastos", "💸"),
+    enlace("/proveedores", "Proveedores", "🧾"),
+  ] : [];
 
-    return (
-        <nav className="fixed bottom-0 w-full bg-white border-t border-gray-200 shadow-md z-50 md:static md:w-auto md:h-screen md:border-r md:border-t-0">
-            <ul className="flex md:flex-col justify-between md:justify-start p-2 md:p-4 gap-2 md:gap-4 overflow-x-auto md:overflow-visible">
-                {enlaces.map((item, i) => (
-                    <li key={i}>
-                        <Link
-                            to={item.ruta}
-                            className={`flex flex-col items-center md:flex-row md:gap-2 text-sm px-3 py-2 rounded-md 
-                                ${location.pathname === item.ruta
-                                    ? "bg-yellow-100 text-yellow-600 font-semibold"
-                                    : "text-gray-700 hover:bg-gray-100"
-                                }`}
-                        >
-                            <span className="text-xl">{item.icono}</span>
-                            <span className="hidden md:inline">{item.label}</span>
-                        </Link>
-                    </li>
-                ))}
+  const enlacesExtras = rol === "dueño" ? [
+    enlace("/configuracion", "Configuración", "⚙️"),
+    enlace("/ayuda", "Centro de Ayuda", "🧠"),
+  ] : [];
 
-                {/* Cerrar sesión */}
-                <li>
-                    <button
-                        onClick={handleLogout}
-                        className="flex flex-col items-center md:flex-row md:gap-2 text-sm px-3 py-2 rounded-md text-gray-700 hover:bg-gray-100"
-                    >
-                        <span className="text-xl">🚪</span>
-                        <span className="hidden md:inline">Cerrar sesión</span>
-                    </button>
-                </li>
-            </ul>
-        </nav>
-    );
+  return (
+    <nav className="w-full md:w-60 h-auto md:h-screen bg-white shadow-md border-r p-4 flex flex-col justify-between fixed md:static z-50">
+      {/* Perfil siempre arriba */}
+      <ul className="mb-6">
+        {enlacesPerfil}
+      </ul>
+
+      {/* Enlaces principales */}
+      <ul className="flex-1 space-y-1 overflow-y-auto">
+        {enlacesGenerales}
+        {enlacesDueño}
+        {enlacesExtras}
+      </ul>
+      {/* Cerrar sesión */}
+      <ul className="mt-4 border-t pt-4">
+        <li>
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-3 px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-100 w-full"
+          >
+            <span className="text-xl">🚪</span>
+            <span>Cerrar sesión</span>
+          </button>
+        </li>
+      </ul>
+    </nav>
+  );
 }
 
 export default Navbar;

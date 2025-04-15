@@ -13,20 +13,32 @@ function LoginAdmin() {
     setLoading(true);
 
     try {
-      const res = await api.post("/empleados/login", { correo, password });
+      const correoNormalizado = correo.trim().toLowerCase();
 
-      if (!res.data?.token || res.data.rol !== "dueño") {
-        alert("❌ Esta cuenta no es de tipo dueño o las credenciales son incorrectas");
+      const res = await api.post("/empleados/login", {
+        correo: correoNormalizado,
+        password,
+      });
+
+      if (!res.data?.token) {
+        alert("❌ Error: Token no recibido del backend.");
         return;
       }
 
+      if (res.data.rol !== "dueño") {
+        alert("❌ Esta cuenta no es de tipo 'dueño'.");
+        return;
+      }
+
+      // Guardar datos localmente
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("rol", res.data.rol);
+      localStorage.setItem("idDueño", res.data.id); // muy importante
 
       alert("✅ Acceso como dueño confirmado");
       navigate("/dashboard");
     } catch (err) {
-      console.error("Error al iniciar sesión:", err);
+      console.error("❌ Error al iniciar sesión:", err);
       alert("❌ Correo o contraseña incorrectos");
     } finally {
       setLoading(false);
