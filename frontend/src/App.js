@@ -7,7 +7,6 @@ import Navbar from "./components/Navbar";
 // Páginas
 import Login from "./pages/Login";
 import Proveedores from "./pages/Proveedores";
-import Dashboard from "./pages/Dashboard";
 import Productos from "./pages/Productos";
 import HistorialCompras from "./pages/HistorialCompras";
 import Ventas from "./pages/Ventas";
@@ -18,6 +17,7 @@ import Inventario from "./pages/Inventario";
 import ReporteGanancias from "./pages/ReporteGanancias";
 import VincularPin from "./pages/VincularPin";
 import InicioDashboard from "./pages/InicioDashboard";
+import Perfil from "./pages/Perfil";
 import LoginAdmin from "./pages/LoginAdmin";
 
 
@@ -44,7 +44,7 @@ function AppContent() {
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/login-admin" element={<LoginAdmin />} />
-
+          <Route path="/perfil" element={<Perfil />} />
           <Route path="/login" element={<Login />} />
           <Route path="/dashboard" element={<InicioDashboard />} />
           <Route path="/vincular-pin" element={<VincularPin />} />

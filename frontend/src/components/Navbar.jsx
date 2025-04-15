@@ -29,7 +29,7 @@ function Navbar() {
   const enlacesPerfil = [enlace("/perfil", "Mi Perfil", "🙍‍♂️")];
 
   const enlacesGenerales = [
-    enlace("/notificaciones", "Notificaciones", "🔔"),
+    enlace("/inventario", "Notificaciones", "🔔"),
     enlace("/dashboard", "Resumen Diario", "📅"),
     enlace("/ventas", "Ventas", "🛒"),
     enlace("/productos", "Productos", "📦"),
